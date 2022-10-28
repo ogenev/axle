@@ -1,0 +1,13 @@
+[package]
+name = "axle"
+version = "0.1.0"
+authors = ["Ognyan Genev <ognian.genev@gmail.com>"]
+edition = "2021"
+rust-version = "1.62.1"
+
+[dependencies]
+
+[workspace]
+members = [
+    "simulators/portal-wire",
+]
