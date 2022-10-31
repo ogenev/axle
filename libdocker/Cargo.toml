@@ -1,15 +1,9 @@
 [package]
-name = "axle"
+name = "libdocker"
 version = "0.1.0"
 authors = ["Ognyan Genev <ognian.genev@gmail.com>"]
 edition = "2021"
 rust-version = "1.62.1"
 
 [dependencies]
-libdocker = { path = "libdocker" }
-
-[workspace]
-members = [
-    "simulators/portal-wire",
-    "libdocker"
-]
+bollard = "0.13"
