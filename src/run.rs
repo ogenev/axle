@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use libdocker::builder::DockerBuilder;
 use libdocker::container::ContainerBackend;
 
