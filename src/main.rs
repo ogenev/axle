@@ -1,13 +1,12 @@
+use axle::cli::Opts;
 use axle::run::Runner;
 use libdocker::docker::Docker;
+use structopt::StructOpt;
 
 fn main() {
-    // Set loggers
+    let opts = Opts::from_args();
 
-    // Cli arguments parse
-    // - docker-endpoint - Endpoint of the local Docker daemon, default ""
-    // - sim -  Regular `expression` selecting the simulators to run, default ""
-    // - client - Comma separated `list` of clients to use, default "trin"
+    // Set loggers
 
     // Get simulators list
     let simulators: Vec<&str> = Vec::new();
