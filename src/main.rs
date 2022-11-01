@@ -1,3 +1,5 @@
+#![allow(unused_variables)]
+
 use axle::cli::Opts;
 use axle::run::Runner;
 use libdocker::docker::Docker;

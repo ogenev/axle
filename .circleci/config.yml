@@ -1,0 +1,43 @@
+version: 2.1
+orbs:
+  rust: circleci/rust@1.6.0
+jobs:
+  lint-build-test:
+        description: |
+            Check linting with Clippy and rustfmt, build the crate, and run tests.
+        executor:
+            name: rust/default
+            tag: 1.62.1
+        environment:
+            RUSTFLAGS: '-D warnings'
+            RUST_LOG: 'debug'
+        steps:
+            - checkout
+            - run:
+                name: Prepare for apt upgrades
+                command: sudo apt update
+            - run:
+                name: Install libssl-dev for openssl-sys
+                command: sudo apt install -y libssl-dev
+            - run:
+                name: Install rustfmt
+                command: rustup component add rustfmt
+            - run:
+                name: Run rustfmt
+                command: cargo fmt --all -- --check
+            - run:
+                name: Install Clippy
+                command: rustup component add clippy
+            - run:
+                name: Run Clippy
+                command: cargo clippy --all --all-targets --all-features --no-deps -- --deny warnings
+            - run:
+                name: Build Axle workspace
+                command: cargo build --workspace
+            - run:
+                name: Test Axle workspace
+                command: cargo test --workspace -- --nocapture
+workflows:
+  merge-test:
+    jobs:
+      - lint-build-test
