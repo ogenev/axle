@@ -11,6 +11,6 @@ libdocker = { path = "libdocker" }
 
 [workspace]
 members = [
-    "simulators/portal-wire",
+    "simulators/portal-wire/testnet",
     "libdocker"
 ]

@@ -1,15 +1,15 @@
 [package]
-name = "portal-wire"
+name = "testnet"
 version = "0.1.0"
 authors = ["Ognyan Genev <ognian.genev@gmail.com>"]
 edition = "2021"
 
 [lib]
-name = "portal_wire"
+name = "testnet"
 path = "src/lib.rs"
 
 [[bin]]
-name = "portal-wire"
+name = "testnet"
 path = "src/main.rs"
 
 [dependencies]
