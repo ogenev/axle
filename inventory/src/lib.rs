@@ -36,6 +36,11 @@ impl Inventory {
         }
         Ok(matched_simulators)
     }
+
+    /// ClientDirectory returns the directory containing the given client's Dockerfile.
+    pub fn client_directory(&self, name: String) -> PathBuf {
+        self.base_dir.join("clients").join(name)
+    }
 }
 
 fn find_dockerfiles<P: AsRef<Path>>(dir: P) -> Vec<PathBuf> {

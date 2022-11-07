@@ -1,5 +1,5 @@
 [package]
-name = "libdocker"
+name = "inventory"
 version = "0.1.0"
 authors = ["Ognyan Genev <ognian.genev@gmail.com>"]
 edition = "2021"
@@ -7,6 +7,5 @@ rust-version = "1.62.1"
 
 [dependencies]
 anyhow = "1.0.66"
-bollard = "0.13"
-inventory = {path = "../inventory"}
-tar = "0.4"
+regex = "1.7.0"
+walkdir = "2.3.2"
