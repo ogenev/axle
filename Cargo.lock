@@ -48,6 +48,7 @@ name = "axle"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "inventory",
  "libdocker",
  "regex",
  "structopt",
@@ -394,6 +395,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "inventory"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "regex",
+ "walkdir",
+]
+
+[[package]]
 name = "itoa"
 version = "1.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -417,6 +427,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "bollard",
+ "inventory",
  "tar",
 ]
 
@@ -778,9 +789,6 @@ dependencies = [
 [[package]]
 name = "testnet"
 version = "0.1.0"
-dependencies = [
- "libdocker",
-]
 
 [[package]]
 name = "textwrap"

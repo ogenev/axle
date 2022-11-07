@@ -1,13 +1,12 @@
 #![allow(unused_variables)]
 
 use axle::cli::Opt;
-use axle::inventory::Inventory;
 use axle::run::Runner;
-use libdocker::docker::Docker;
+use inventory::Inventory;
+use libdocker::docker::{Docker, DockerConfig};
 use std::path::PathBuf;
 use std::process;
 use structopt::StructOpt;
-use tracing::error;
 use tracing_subscriber::EnvFilter;
 
 fn main() {
@@ -28,18 +27,17 @@ fn main() {
     // Get simulators list
     let simulators = inventory.match_simulators(&opt.sim_pattern).unwrap();
     if simulators.is_empty() {
-        error!("No simulators for pattern: {}", opt.sim_pattern);
+        eprintln!("No simulators for pattern: {}", opt.sim_pattern);
         process::exit(1);
     }
 
     // Create docker backends
-    let (docker_builder, container_backend) = Docker::connect(None);
+    let docker_cfg = DockerConfig::new(inventory.clone());
+    let (docker_builder, container_backend) = Docker::connect(opt.docker_endpoint, docker_cfg);
 
     // Run:
-    // - new runner
-    let runner = Runner::new(docker_builder, container_backend);
-    // - get client list and build runner
-    runner.build();
+    let mut runner = Runner::new(inventory, docker_builder, container_backend);
+    runner.build(opt.clients, simulators.clone()).unwrap();
 
     // - Iterates over all simulators and run environment
     for sim in simulators {
