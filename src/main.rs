@@ -1,14 +1,20 @@
 #![allow(unused_variables)]
 
-use axle::cli::Opts;
+use axle::cli::Opt;
 use axle::run::Runner;
 use libdocker::docker::Docker;
 use structopt::StructOpt;
+use tracing_subscriber::EnvFilter;
 
 fn main() {
-    let opts = Opts::from_args();
+    let opt = Opt::from_args();
+    let filter_layer = EnvFilter::try_from_default_env()
+        .or_else(|_| EnvFilter::try_new(opt.log_level))
+        .unwrap();
 
-    // Set loggers
+    tracing_subscriber::fmt()
+        .with_env_filter(filter_layer)
+        .init();
 
     // Get simulators list
     let simulators: Vec<&str> = Vec::new();

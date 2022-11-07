@@ -7,7 +7,7 @@ use structopt::StructOpt;
     version = "0.0.1",
     about = "Axle - Portal Network end-to-end test harness."
 )]
-pub struct Opts {
+pub struct Opt {
     #[structopt(
         parse(from_os_str),
         default_value = "workspace/logs",
@@ -17,7 +17,7 @@ pub struct Opts {
     pub results_root: PathBuf,
 
     #[structopt(
-    default_value = "debug",
+    default_value = "info",
     possible_values(&["info", "warn", "debug", "trace"]),
     short,
     long = "loglevel",
