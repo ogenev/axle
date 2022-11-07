@@ -1,9 +1,13 @@
 #![allow(unused_variables)]
 
 use axle::cli::Opt;
+use axle::inventory::Inventory;
 use axle::run::Runner;
 use libdocker::docker::Docker;
+use std::path::PathBuf;
+use std::process;
 use structopt::StructOpt;
+use tracing::error;
 use tracing_subscriber::EnvFilter;
 
 fn main() {
@@ -16,8 +20,17 @@ fn main() {
         .with_env_filter(filter_layer)
         .init();
 
+    // Load inventory
+    let root_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+    let mut inventory = Inventory::new(root_dir);
+    inventory.load_inventory();
+
     // Get simulators list
-    let simulators: Vec<&str> = Vec::new();
+    let simulators = inventory.match_simulators(&opt.sim_pattern).unwrap();
+    if simulators.is_empty() {
+        error!("No simulators for pattern: {}", opt.sim_pattern);
+        process::exit(1);
+    }
 
     // Create docker backends
     let (docker_builder, container_backend) = Docker::connect(None);

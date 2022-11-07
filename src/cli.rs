@@ -28,11 +28,12 @@ pub struct Opt {
     pub docker_endpoint: Option<String>,
 
     #[structopt(
+        default_value = "",
         short,
         long = "sim",
         help = "Regular `expression` selecting the simulators to run."
     )]
-    pub sim_pattern: Option<String>,
+    pub sim_pattern: String,
 
     #[structopt(
         use_delimiter = true,
