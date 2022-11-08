@@ -11,6 +11,7 @@ libdocker = { path = "libdocker" }
 inventory = { path = "inventory" }
 regex = "1.7.0"
 structopt = "0.3"
+tokio = { version = "1.21.2", features = ["full"] }
 tracing = "0.1.37"
 tracing-subscriber = { version="0.3.16", features = ["env-filter"]}
 walkdir = "2.3.2"

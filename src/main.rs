@@ -9,7 +9,8 @@ use std::process;
 use structopt::StructOpt;
 use tracing_subscriber::EnvFilter;
 
-fn main() {
+#[tokio::main]
+async fn main() -> anyhow::Result<()> {
     let opt = Opt::from_args();
     let filter_layer = EnvFilter::try_from_default_env()
         .or_else(|_| EnvFilter::try_new(opt.log_level))
@@ -24,6 +25,8 @@ fn main() {
     let mut inventory = Inventory::new(root_dir);
     inventory.load_inventory();
 
+    println!("Inventory: {:?}", inventory);
+
     // Get simulators list
     let simulators = inventory.match_simulators(&opt.sim_pattern).unwrap();
     if simulators.is_empty() {
@@ -31,18 +34,21 @@ fn main() {
         process::exit(1);
     }
 
+    println!("Matched simulators: {:?}", simulators);
+
     // Create docker backends
     let docker_cfg = DockerConfig::new(inventory.clone());
     let (docker_builder, container_backend) = Docker::connect(opt.docker_endpoint, docker_cfg);
 
-    // Run:
+    // Run
     let mut runner = Runner::new(inventory, docker_builder, container_backend);
-    runner.build(opt.clients, simulators.clone()).unwrap();
+    runner.build(opt.clients, simulators.clone()).await?;
 
-    // - Iterates over all simulators and run environment
+    // Iterates over all simulators and run environment
     for sim in simulators {
-        runner.run();
+        // runner.run();
     }
 
     println!("Hello Portal Network");
+    Ok(())
 }

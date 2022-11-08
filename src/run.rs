@@ -4,7 +4,6 @@ use inventory::Inventory;
 use libdocker::builder::DockerBuilder;
 use libdocker::container::ContainerBackend;
 use std::collections::HashMap;
-use std::path::PathBuf;
 use tracing::info;
 
 /// Runner executes a simulation runs
@@ -30,13 +29,13 @@ impl Runner {
     }
 
     /// Build clients and simulators images
-    pub fn build(
+    pub async fn build(
         &mut self,
         client_list: Vec<String>,
-        _sim_list: Vec<String>,
+        sim_list: Vec<String>,
     ) -> anyhow::Result<()> {
-        self.build_clients(client_list)?;
-        // self.build_simulators(sim_list);
+        self.build_clients(client_list).await?;
+        self.build_simulators(sim_list).await?;
         Ok(())
     }
 
@@ -46,14 +45,20 @@ impl Runner {
     }
 
     /// Builds client images
-    fn build_clients(&mut self, client_list: Vec<String>) -> anyhow::Result<()> {
+    async fn build_clients(&mut self, client_list: Vec<String>) -> anyhow::Result<()> {
         if client_list.is_empty() {
             return Err(anyhow!("Client list is empty, cannot simulate"));
         }
         info!("Building {} clients ...", client_list.len());
 
         for client in client_list {
-            let image = self.builder.build_client_image(client.clone()).unwrap();
+            if !self.inventory.has_client(&client) {
+                return Err(anyhow!("UNknown client {client}"));
+            }
+
+            // TODO: Read client metadata if available
+
+            let image = self.builder.build_client_image(client.clone()).await?;
 
             //TODO: Read version
 
@@ -70,7 +75,15 @@ impl Runner {
         Ok(())
     }
 
-    fn build_simulators(_sim_list: Vec<PathBuf>) {
-        todo!()
+    // Builds simulator images
+    async fn build_simulators(&mut self, sim_list: Vec<String>) -> anyhow::Result<()> {
+        info!("Building {} simulators ...", sim_list.len());
+
+        for sim in sim_list {
+            let image = self.builder.build_simulator_image(sim.clone()).await?;
+            self.sim_images.insert(sim, image);
+        }
+
+        Ok(())
     }
 }

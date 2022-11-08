@@ -38,9 +38,19 @@ impl Inventory {
         Ok(matched_simulators)
     }
 
-    /// ClientDirectory returns the directory containing the given client's Dockerfile.
-    pub fn client_directory(&self, name: String) -> PathBuf {
+    /// Returns the directory containing the given client's Dockerfile.
+    pub fn client_directory(&self, name: &str) -> PathBuf {
         self.base_dir.join("clients").join(name)
+    }
+
+    /// Returns the directory of containing the given simulator's Dockerfile.
+    pub fn simulator_directory(&self, name: &str) -> PathBuf {
+        self.base_dir.join("simulators").join(name)
+    }
+
+    // Returns true if the inventory contains the given client
+    pub fn has_client(&self, name: &str) -> bool {
+        self.clients.contains_key(name)
     }
 }
 
