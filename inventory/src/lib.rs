@@ -1,5 +1,6 @@
 use anyhow::anyhow;
 use regex::Regex;
+use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use walkdir::WalkDir;
 
@@ -7,16 +8,16 @@ use walkdir::WalkDir;
 #[derive(Clone, Debug)]
 pub struct Inventory {
     base_dir: PathBuf,
-    clients: Vec<PathBuf>,
-    simulators: Vec<PathBuf>,
+    clients: HashMap<String, PathBuf>,
+    simulators: HashMap<String, PathBuf>,
 }
 
 impl Inventory {
     pub fn new<P: AsRef<Path>>(base_dir: P) -> Self {
         Inventory {
             base_dir: PathBuf::from(base_dir.as_ref()),
-            clients: Vec::new(),
-            simulators: Vec::new(),
+            clients: HashMap::new(),
+            simulators: HashMap::new(),
         }
     }
 
@@ -26,11 +27,11 @@ impl Inventory {
     }
 
     /// Returns matching simulator names
-    pub fn match_simulators(&self, expr: &str) -> anyhow::Result<Vec<PathBuf>> {
+    pub fn match_simulators(&self, expr: &str) -> anyhow::Result<Vec<String>> {
         let re = Regex::new(expr).map_err(|err| anyhow!(err))?;
         let mut matched_simulators = Vec::new();
-        for sim in self.simulators.clone() {
-            if re.is_match(&sim.to_string_lossy()) {
+        for (sim, _) in self.simulators.clone().into_iter() {
+            if re.is_match(&sim) {
                 matched_simulators.push(sim);
             }
         }
@@ -43,13 +44,20 @@ impl Inventory {
     }
 }
 
-fn find_dockerfiles<P: AsRef<Path>>(dir: P) -> Vec<PathBuf> {
-    let mut dockerfiles: Vec<PathBuf> = Vec::new();
-    for entry in WalkDir::new(dir).into_iter().filter_map(|e| e.ok()) {
+fn find_dockerfiles<P: AsRef<Path>>(dir: P) -> HashMap<String, PathBuf> {
+    let mut dockerfiles: HashMap<String, PathBuf> = HashMap::new();
+    for entry in WalkDir::new(dir.as_ref())
+        .into_iter()
+        .filter_map(|e| e.ok())
+    {
         let f_name = entry.file_name().to_string_lossy();
 
         if f_name.starts_with("Dockerfile") {
-            dockerfiles.push(entry.into_path());
+            if let Ok(name) = entry.path().strip_prefix(dir.as_ref()) {
+                if let Some(name) = name.parent() {
+                    dockerfiles.insert(name.to_string_lossy().parse().unwrap(), entry.into_path());
+                }
+            }
         }
     }
 

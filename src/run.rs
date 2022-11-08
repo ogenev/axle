@@ -33,7 +33,7 @@ impl Runner {
     pub fn build(
         &mut self,
         client_list: Vec<String>,
-        _sim_list: Vec<PathBuf>,
+        _sim_list: Vec<String>,
     ) -> anyhow::Result<()> {
         self.build_clients(client_list)?;
         // self.build_simulators(sim_list);
