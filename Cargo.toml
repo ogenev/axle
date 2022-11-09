@@ -7,7 +7,7 @@ rust-version = "1.62.1"
 
 [dependencies]
 anyhow = "1.0.66"
-libdocker = { path = "libdocker" }
+docker = { path = "docker" }
 inventory = { path = "inventory" }
 regex = "1.7.0"
 structopt = "0.3"
@@ -19,6 +19,6 @@ walkdir = "2.3.2"
 [workspace]
 members = [
     "simulators/portal-wire/testnet",
-    "libdocker",
+    "docker",
     "inventory"
 ]

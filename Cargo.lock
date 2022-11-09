@@ -48,8 +48,8 @@ name = "axle"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "docker",
  "inventory",
- "libdocker",
  "regex",
  "structopt",
  "tokio",
@@ -168,6 +168,19 @@ dependencies = [
  "darling_core",
  "quote",
  "syn",
+]
+
+[[package]]
+name = "docker"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "bollard",
+ "inventory",
+ "tar",
+ "tokio",
+ "tokio-stream",
+ "tracing",
 ]
 
 [[package]]
@@ -421,19 +434,6 @@ name = "libc"
 version = "0.2.137"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fc7fcc620a3bff7cdd7a365be3376c97191aeaccc2a603e600951e452615bf89"
-
-[[package]]
-name = "libdocker"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "bollard",
- "inventory",
- "tar",
- "tokio",
- "tokio-stream",
- "tracing",
-]
 
 [[package]]
 name = "lock_api"

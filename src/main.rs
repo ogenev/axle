@@ -2,8 +2,8 @@
 
 use axle::cli::Opt;
 use axle::run::Runner;
+use docker::docker::{Docker, DockerConfig};
 use inventory::Inventory;
-use libdocker::docker::{Docker, DockerConfig};
 use std::path::PathBuf;
 use std::process;
 use structopt::StructOpt;

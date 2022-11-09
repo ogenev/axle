@@ -1,8 +1,8 @@
 use crate::ClientDefinition;
 use anyhow::anyhow;
+use docker::builder::DockerBuilder;
+use docker::container::ContainerBackend;
 use inventory::Inventory;
-use libdocker::builder::DockerBuilder;
-use libdocker::container::ContainerBackend;
 use std::collections::HashMap;
 use tracing::info;
 
