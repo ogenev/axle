@@ -2,6 +2,7 @@
 
 use axle::cli::Opt;
 use axle::run::Runner;
+use axle::SimulatorConfig;
 use docker::docker::{Docker, DockerConfig};
 use inventory::Inventory;
 use std::path::PathBuf;
@@ -25,16 +26,12 @@ async fn main() -> anyhow::Result<()> {
     let mut inventory = Inventory::new(root_dir);
     inventory.load_inventory();
 
-    println!("Inventory: {:?}", inventory);
-
     // Get simulators list
     let simulators = inventory.match_simulators(&opt.sim_pattern).unwrap();
     if simulators.is_empty() {
         eprintln!("No simulators for pattern: {}", opt.sim_pattern);
         process::exit(1);
     }
-
-    println!("Matched simulators: {:?}", simulators);
 
     // Create docker backends
     let docker_cfg = DockerConfig::new(inventory.clone());
@@ -44,9 +41,11 @@ async fn main() -> anyhow::Result<()> {
     let mut runner = Runner::new(inventory, docker_builder, container_backend);
     runner.build(opt.clients, simulators.clone()).await?;
 
+    let sim_cfg = SimulatorConfig::new(opt.results_root);
+
     // Iterates over all simulators and run environment
     for sim in simulators {
-        // runner.run();
+        runner.run(sim, sim_cfg.clone()).await?;
     }
 
     println!("Hello Portal Network");

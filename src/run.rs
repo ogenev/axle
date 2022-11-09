@@ -1,10 +1,10 @@
-use crate::ClientDefinition;
+use crate::{ClientDefinition, SimulatorConfig};
 use anyhow::anyhow;
 use docker::builder::DockerBuilder;
 use docker::container::ContainerBackend;
 use inventory::Inventory;
 use std::collections::HashMap;
-use tracing::info;
+use tracing::{debug, info};
 
 /// Runner executes a simulation runs
 #[derive(Debug)]
@@ -40,8 +40,49 @@ impl Runner {
     }
 
     /// Runs one simulation
-    pub fn run(&self) {
-        todo!()
+    pub async fn run(&self, sim: String, cfg: SimulatorConfig) -> anyhow::Result<()> {
+        // TODO: Create workspace
+
+        info!("Running simulation: {sim}");
+        let mut client_def = HashMap::new();
+
+        match cfg.client_list {
+            Some(clients) => {
+                for name in clients {
+                    match self.client_defs.clone().remove(&name) {
+                        Some(def) => {
+                            client_def.insert(name, def);
+                        }
+                        None => {
+                            return Err(anyhow!("Unknown client {name} in simulation client list"))
+                        }
+                    }
+                }
+            }
+            None => {
+                for (name, def) in self.client_defs.clone() {
+                    client_def.insert(name, def);
+                }
+            }
+        }
+        // TODO: Create test manager
+
+        // Create the simulator container.
+        let image = self.sim_images.get(&sim).unwrap();
+        let container_name = self.container.create_container(image).await?;
+
+        // TODO: Set the log file, and notify TestManager about the container.
+
+        // Start container
+        debug!("starting simulator container");
+        self.container.start_container(&container_name).await?;
+
+        debug!("deleting simulator container");
+        self.container.delete_container(&container_name).await?;
+
+        // TODO: Wait for simulation to end.
+        // TODO: Count the results.
+        Ok(())
     }
 
     /// Builds client images
