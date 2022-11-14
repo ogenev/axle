@@ -1,3 +1,4 @@
+use crate::testmanager::TestManager;
 use crate::{ClientDefinition, SimulatorConfig};
 use anyhow::anyhow;
 use docker::builder::DockerBuilder;
@@ -46,7 +47,7 @@ impl Runner {
         info!("Running simulation: {sim}");
         let mut client_def = HashMap::new();
 
-        match cfg.client_list {
+        match cfg.clone().client_list {
             Some(clients) => {
                 for name in clients {
                     match self.client_defs.clone().remove(&name) {
@@ -66,6 +67,7 @@ impl Runner {
             }
         }
         // TODO: Create test manager
+        let _test_manager = TestManager::new(self.container.clone(), client_def, cfg);
 
         // Create the simulator container.
         let image = self.sim_images.get(&sim).unwrap();
